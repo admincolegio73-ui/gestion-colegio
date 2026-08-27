@@ -197,7 +197,9 @@ body {
 .main-content {
     margin-left: var(--sidebar-width);
     flex: 1;
-    padding: 40px 48px;
+    padding: 40px 40px;
+    min-width: 0;
+    width: calc(100% - var(--sidebar-width));
 }
 
 .page-header {
