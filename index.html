@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Colegio — Sistema de Gestión</title>
-    <!-- Google Fonts: Manrope (misma fuente de Boldo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons (iconos minimalistas tipo línea) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -23,6 +21,7 @@
             <span class="brand-text">Admin Colegio</span>
         </div>
         <nav class="sidebar-nav">
+            <span class="nav-section-label">Principal</span>
             <a href="#" class="nav-item active" data-section="dashboard">
                 <i data-lucide="layout-dashboard"></i>
                 <span>Dashboard</span>
@@ -34,6 +33,22 @@
             <a href="#" class="nav-item" data-section="historial">
                 <i data-lucide="list"></i>
                 <span>Historial</span>
+            </a>
+
+            <span class="nav-section-label">Registros</span>
+            <a href="#" class="nav-item" data-section="estudiantes">
+                <i data-lucide="users"></i>
+                <span>Estudiantes</span>
+            </a>
+            <a href="#" class="nav-item" data-section="personal">
+                <i data-lucide="briefcase"></i>
+                <span>Personal</span>
+            </a>
+
+            <span class="nav-section-label">Reportes</span>
+            <a href="#" class="nav-item" data-section="reportes">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Reportes</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -51,8 +66,6 @@
         </button>
         <span class="mobile-brand">Admin Colegio</span>
     </header>
-
-    <!-- Overlay for mobile sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Main Content -->
@@ -61,8 +74,8 @@
         <!-- Page Header -->
         <div class="page-header">
             <div>
-                <h1 class="page-title">Dashboard</h1>
-                <p class="page-subtitle">Resumen general de las finanzas del colegio</p>
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <p class="page-subtitle" id="pageSubtitle">Resumen general de las finanzas del colegio</p>
             </div>
             <button class="btn btn-ghost" id="btnActualizar">
                 <i data-lucide="refresh-cw"></i>
@@ -70,112 +83,325 @@
             </button>
         </div>
 
-        <!-- Stats Cards -->
-        <section class="stats-grid" id="sectionDashboard">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Total Ingresos</span>
-                    <div class="stat-icon stat-icon--income">
-                        <i data-lucide="trending-up"></i>
+        <!-- ═══════════ SECCIÓN: DASHBOARD ═══════════ -->
+        <section id="sectionDashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Ingresos</span>
+                        <div class="stat-icon stat-icon--income"><i data-lucide="trending-up"></i></div>
                     </div>
+                    <p class="stat-value" id="totalIngresos">$0.00</p>
+                    <span class="stat-badge stat-badge--income">Entradas</span>
                 </div>
-                <p class="stat-value" id="totalIngresos">$0.00</p>
-                <span class="stat-badge stat-badge--income">Entradas</span>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Egresos</span>
+                        <div class="stat-icon stat-icon--expense"><i data-lucide="trending-down"></i></div>
+                    </div>
+                    <p class="stat-value" id="totalEgresos">$0.00</p>
+                    <span class="stat-badge stat-badge--expense">Salidas</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Balance Actual</span>
+                        <div class="stat-icon stat-icon--balance"><i data-lucide="wallet"></i></div>
+                    </div>
+                    <p class="stat-value" id="balanceActual">$0.00</p>
+                    <span class="stat-badge stat-badge--balance">Disponible</span>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Total Egresos</span>
-                    <div class="stat-icon stat-icon--expense">
-                        <i data-lucide="trending-down"></i>
-                    </div>
+
+            <!-- Últimas transacciones en dashboard -->
+            <div class="content-card">
+                <div class="card-top">
+                    <h2 class="card-title">Últimas Transacciones</h2>
+                    <p class="card-description">Los 10 movimientos más recientes.</p>
                 </div>
-                <p class="stat-value" id="totalEgresos">$0.00</p>
-                <span class="stat-badge stat-badge--expense">Salidas</span>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Balance Actual</span>
-                    <div class="stat-icon stat-icon--balance">
-                        <i data-lucide="wallet"></i>
-                    </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Categoría</th>
+                                <th>Descripción</th>
+                                <th class="text-right">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaRecientes"></tbody>
+                    </table>
                 </div>
-                <p class="stat-value" id="balanceActual">$0.00</p>
-                <span class="stat-badge stat-badge--balance">Disponible</span>
             </div>
         </section>
 
-        <!-- New Transaction Form -->
-        <section class="content-card" id="sectionNueva">
-            <div class="card-top">
-                <h2 class="card-title">Registrar Transacción</h2>
-                <p class="card-description">Ingresa los detalles de la nueva operación financiera.</p>
+        <!-- ═══════════ SECCIÓN: NUEVA TRANSACCIÓN ═══════════ -->
+        <section id="sectionNueva" style="display:none">
+            <div class="content-card">
+                <div class="card-top">
+                    <h2 class="card-title">Registrar Transacción</h2>
+                    <p class="card-description">Ingresa los detalles de la nueva operación financiera.</p>
+                </div>
+                <form id="transaccionForm" class="form-grid">
+                    <div class="form-group">
+                        <label for="txFecha" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="txFecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="txTipo" class="form-label">Tipo de Operación</label>
+                        <select class="form-control" id="txTipo" required>
+                            <option value="" disabled selected>Seleccione...</option>
+                            <option value="Ingreso">Ingreso</option>
+                            <option value="Egreso">Egreso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="txCategoria" class="form-label">Categoría</label>
+                        <select class="form-control" id="txCategoria" required>
+                            <option value="" disabled selected>Seleccione el tipo primero...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="txMonto" class="form-label">Monto ($)</label>
+                        <input type="number" class="form-control" id="txMonto" min="0.01" step="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group form-group--full">
+                        <label for="txDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="txDescripcion" rows="3" required placeholder="Detalle de la transacción..."></textarea>
+                    </div>
+                    <div class="form-group form-group--full form-actions">
+                        <button type="submit" class="btn btn-primary" id="btnGuardarTx">
+                            <i data-lucide="save"></i>
+                            <span>Guardar Registro</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <form id="transaccionForm" class="form-grid">
-                <div class="form-group">
-                    <label for="tipo" class="form-label">Tipo de Operación</label>
-                    <select class="form-control" id="tipo" required>
-                        <option value="" disabled selected>Seleccione...</option>
-                        <option value="Ingreso">Ingreso (Entrada de dinero)</option>
-                        <option value="Egreso">Egreso (Salida de dinero)</option>
-                    </select>
+        </section>
+
+        <!-- ═══════════ SECCIÓN: HISTORIAL ═══════════ -->
+        <section id="sectionHistorial" style="display:none">
+            <div class="content-card">
+                <div class="card-top">
+                    <h2 class="card-title">Filtros</h2>
                 </div>
-                <div class="form-group">
-                    <label for="categoria" class="form-label">Categoría</label>
-                    <select class="form-control" id="categoria" required>
-                        <option value="" disabled selected>Seleccione el tipo primero...</option>
-                    </select>
+                <div class="filter-bar">
+                    <div class="form-group">
+                        <label class="form-label">Desde</label>
+                        <input type="date" class="form-control" id="filtroDesde">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hasta</label>
+                        <input type="date" class="form-control" id="filtroHasta">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-control" id="filtroTipo">
+                            <option value="">Todos</option>
+                            <option value="Ingreso">Ingreso</option>
+                            <option value="Egreso">Egreso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Buscar</label>
+                        <input type="text" class="form-control" id="filtroBusqueda" placeholder="Texto en descripción...">
+                    </div>
+                    <div class="form-group filter-actions">
+                        <button class="btn btn-primary" id="btnFiltrar">
+                            <i data-lucide="search"></i> <span>Filtrar</span>
+                        </button>
+                        <button class="btn btn-ghost" id="btnLimpiarFiltros">
+                            <i data-lucide="x"></i> <span>Limpiar</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="monto" class="form-label">Monto ($)</label>
-                    <input type="number" class="form-control" id="monto" min="0.01" step="0.01" required placeholder="0.00">
+            </div>
+            <div class="content-card">
+                <div class="card-top">
+                    <h2 class="card-title">Historial de Transacciones</h2>
+                    <p class="card-description">Listado completo de los movimientos financieros registrados.</p>
                 </div>
-                <div class="form-group form-group--full">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea class="form-control" id="descripcion" rows="3" required placeholder="Detalle de la transacción..."></textarea>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Categoría</th>
+                                <th>Descripción</th>
+                                <th class="text-right">Monto</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaTransacciones"></tbody>
+                    </table>
                 </div>
-                <div class="form-group form-group--full form-actions">
-                    <button type="submit" class="btn btn-primary" id="btnGuardar">
-                        <i data-lucide="save"></i>
-                        <span>Guardar Registro</span>
+            </div>
+        </section>
+
+        <!-- ═══════════ SECCIÓN: ESTUDIANTES ═══════════ -->
+        <section id="sectionEstudiantes" style="display:none">
+            <div class="content-card">
+                <div class="card-top card-top-row">
+                    <div>
+                        <h2 class="card-title">Registro de Estudiantes</h2>
+                        <p class="card-description">Gestión de estudiantes inscritos en el colegio.</p>
+                    </div>
+                    <button class="btn btn-primary" id="btnNuevoEstudiante">
+                        <i data-lucide="user-plus"></i> <span>Nuevo Estudiante</span>
                     </button>
                 </div>
-            </form>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Grado</th>
+                                <th>Sección</th>
+                                <th>Representante</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaEstudiantes"></tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
-        <!-- Transactions Table -->
-        <section class="content-card" id="sectionHistorial">
-            <div class="card-top">
-                <h2 class="card-title">Historial de Transacciones</h2>
-                <p class="card-description">Listado completo de los movimientos financieros registrados.</p>
+        <!-- ═══════════ SECCIÓN: PERSONAL ═══════════ -->
+        <section id="sectionPersonal" style="display:none">
+            <div class="content-card">
+                <div class="card-top card-top-row">
+                    <div>
+                        <h2 class="card-title">Registro de Personal</h2>
+                        <p class="card-description">Gestión de maestros y personal del colegio.</p>
+                    </div>
+                    <button class="btn btn-primary" id="btnNuevoPersonal">
+                        <i data-lucide="user-plus"></i> <span>Nuevo Personal</span>
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Cargo</th>
+                                <th>Sueldo Base</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPersonal"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Tipo</th>
-                            <th>Categoría</th>
-                            <th>Descripción</th>
-                            <th class="text-right">Monto</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaTransacciones">
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                Cargando datos...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        </section>
+
+        <!-- ═══════════ SECCIÓN: REPORTES ═══════════ -->
+        <section id="sectionReportes" style="display:none">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Registros</span>
+                        <div class="stat-icon stat-icon--balance"><i data-lucide="hash"></i></div>
+                    </div>
+                    <p class="stat-value" id="repTotalRegistros">0</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Estudiantes Activos</span>
+                        <div class="stat-icon stat-icon--income"><i data-lucide="users"></i></div>
+                    </div>
+                    <p class="stat-value" id="repEstudiantes">0</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Personal Activo</span>
+                        <div class="stat-icon stat-icon--expense"><i data-lucide="briefcase"></i></div>
+                    </div>
+                    <p class="stat-value" id="repPersonal">0</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <div class="card-top">
+                    <h2 class="card-title">Desglose por Categoría</h2>
+                    <p class="card-description">Distribución de ingresos y egresos por categoría.</p>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Tipo</th>
+                                <th class="text-right">Cantidad</th>
+                                <th class="text-right">Total</th>
+                                <th>Proporción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReporteCategoria"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="content-card">
+                <div class="card-top">
+                    <h2 class="card-title">Resumen por Mes</h2>
+                    <p class="card-description">Movimientos financieros agrupados por mes.</p>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mes</th>
+                                <th class="text-right">Ingresos</th>
+                                <th class="text-right">Egresos</th>
+                                <th class="text-right">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReporteMes"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Toast notification -->
+    <!-- Modal genérico -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Modal</h3>
+                <button class="modal-close" id="modalClose"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <!-- Confirm dialog -->
+    <div class="modal-overlay" id="confirmOverlay">
+        <div class="modal modal--small">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirmTitle">¿Estás seguro?</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="confirmCancel">Cancelar</button>
+                <button class="btn btn-danger" id="confirmOk">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
     <div class="toast" id="toast">
         <i data-lucide="check-circle"></i>
-        <span id="toastMessage">Registro guardado correctamente.</span>
+        <span id="toastMessage">Operación exitosa.</span>
     </div>
 
     <script src="app.js"></script>
