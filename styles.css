@@ -1,0 +1,41 @@
+/* Estilos personalizados para el sistema escolar */
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f6f9 !important;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Colores para las filas según el tipo de transacción */
+.fila-ingreso {
+    border-left: 4px solid #198754;
+}
+
+.fila-egreso {
+    border-left: 4px solid #dc3545;
+}
+
+/* Animación de carga en el botón */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.2em;
+}
