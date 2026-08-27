@@ -198,7 +198,6 @@ body {
     margin-left: var(--sidebar-width);
     flex: 1;
     padding: 40px 48px;
-    max-width: 1200px;
 }
 
 .page-header {
